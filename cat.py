@@ -1,5 +1,6 @@
 import sys, pygame, json
 from pygame.locals import *
+from floatrect import FloatRect
 from collision import collision_delta
 pygame.init()
 
@@ -12,13 +13,13 @@ size = width, height = mapwidth * tilesize, mapheight * tilesize
 wallcolor = pygame.Color(50,50,50)
 map = map["tiles"]
 
-speed = [0, 0]
+speed = [0.0, 0.0]
+position = [42.0, 42.0]
 black = 0, 0, 0
 
 screen = pygame.display.set_mode(size, flags=pygame.DOUBLEBUF)
 
 ball = pygame.image.load("nyan01.png")
-ballrect = ball.get_rect().move(42,42)
 
 font = pygame.font.SysFont("Comic Sans",20)
 
@@ -28,7 +29,7 @@ while 1:
 
         if event.type == pygame.KEYDOWN:
             if event.key == K_w:
-                speed[1] = -4
+                speed[1] = -3
             elif event.key == K_a:
                 speed[0] -= 1
             elif event.key == K_d:
@@ -40,17 +41,17 @@ while 1:
             elif event.key == K_d:
                 speed[0] -= 1
 
-    speed[1] = min(speed[1] + 0.1, 3)
+    speed[1] = min(speed[1] + 0.05, 3)
 
-    ballrect = ballrect.move(speed)
-    if ballrect.left < 0 or ballrect.right > width:
-        speed[0] = 0
-    if ballrect.top < 0 or ballrect.bottom > height:
-        speed[1] = 0
+    position[0] += speed[0]
+    position[1] += speed[1]
 
-    dx, dy = collision_delta(ballrect,speed,map,tilesize)
-    ballrect = ballrect.move(dx, dy)
-    
+    collectangle = FloatRect(position[0], position[1], ball.get_width(), ball.get_height())
+    dx, dy = collision_delta(collectangle,speed,map,tilesize)
+    position[0] += dx
+    position[1] += dy
+    ballrect = ball.get_rect().move(position[0], position[1])
+
     # update display
     screen.fill(black)
     for y in range(mapheight):

@@ -27,11 +27,11 @@ def x_delta(rect, xvel, map, tilesize):
     if xvel == 0:
         return 0
 
-    top = rect.top//tilesize
-    bottom = rect.bottom//tilesize
+    top = int(rect.top//tilesize)
+    bottom = int(rect.bottom//tilesize)
     
     if xvel > 0: #moving right
-        x_limit = rect.right//tilesize
+        x_limit = int(rect.right//tilesize)
 
         for y in range(top,bottom+1):
             if map[y][x_limit] == 1:
@@ -39,7 +39,7 @@ def x_delta(rect, xvel, map, tilesize):
         return 0
 
     else:
-        x_limit = rect.left//tilesize
+        x_limit = int(rect.left//tilesize)
 
         for y in range(top,bottom+1):
             if map[y][x_limit] == 1:
@@ -50,11 +50,11 @@ def y_delta(rect, yvel, map, tilesize):
     if yvel == 0:
         return 0
 
-    left = rect.left//tilesize
-    right = rect.right//tilesize
+    left = int(rect.left//tilesize)
+    right = int(rect.right//tilesize)
     
     if yvel > 0: #moving down
-        y_limit = rect.bottom//tilesize
+        y_limit = int(rect.bottom//tilesize)
 
         for x in range(left,right+1):
             if map[y_limit][x] == 1:
@@ -62,7 +62,7 @@ def y_delta(rect, yvel, map, tilesize):
         return 0
 
     else:
-        y_limit = rect.top//tilesize
+        y_limit = int(rect.top//tilesize)
 
         for x in range(left,right+1):
             if map[y_limit][x] == 1:
