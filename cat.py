@@ -1,4 +1,4 @@
-import sys, pygame
+import sys, pygame, json
 from pygame.locals import *
 from collision import collision_delta
 pygame.init()
@@ -12,16 +12,7 @@ size = width, height = mapwidth * tilesize, mapheight * tilesize
 
 wallcolor = pygame.Color(50,50,50)
 
-map =  [[1,1,1,1,1,1,1,1,1,1],
-        [1,0,0,0,0,0,0,0,0,1],
-        [1,0,0,0,0,0,0,0,0,1],
-        [1,0,0,0,0,0,0,0,0,1],
-        [1,0,0,0,0,0,0,1,0,1],
-        [1,0,0,0,0,0,0,0,0,1],
-        [1,0,0,0,0,0,0,0,0,1],
-        [1,0,0,0,1,0,0,1,0,1],
-        [1,0,0,0,0,0,0,0,0,1],
-        [1,1,1,1,1,1,1,1,1,1]]
+map = json.load(open('world.json'))
 
 speed = [0, 0]
 black = 0, 0, 0
