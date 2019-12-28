@@ -28,24 +28,19 @@ while 1:
 
         if event.type == pygame.KEYDOWN:
             if event.key == K_w:
-                speed[1] -= 1
+                speed[1] = -4
             elif event.key == K_a:
                 speed[0] -= 1
-            elif event.key == K_s:
-                speed[1] += 1
             elif event.key == K_d:
                 speed[0] += 1
 
         if event.type == pygame.KEYUP:
-            if event.key == K_w:
-                speed[1] += 1
-            elif event.key == K_a:
+            if event.key == K_a:
                 speed[0] += 1
-            elif event.key == K_s:
-                speed[1] -= 1
             elif event.key == K_d:
                 speed[0] -= 1
 
+    speed[1] = min(speed[1] + 0.1, 3)
 
     ballrect = ballrect.move(speed)
     if ballrect.left < 0 or ballrect.right > width:
