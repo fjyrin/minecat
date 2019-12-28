@@ -5,14 +5,12 @@ pygame.init()
 
 clock = pygame.time.Clock()
 
-
-tilesize = 32
-mapsize = mapwidth, mapheight = 10, 10
-size = width, height = mapwidth * tilesize, mapheight * tilesize
-
-wallcolor = pygame.Color(50,50,50)
-
 map = json.load(open('world.json'))
+tilesize = map["tilesize"]
+mapsize = mapwidth, mapheight = map["mapwidth"], map["mapheight"]
+size = width, height = mapwidth * tilesize, mapheight * tilesize
+wallcolor = pygame.Color(50,50,50)
+map = map["tiles"]
 
 speed = [0, 0]
 black = 0, 0, 0
