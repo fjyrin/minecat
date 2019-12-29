@@ -30,7 +30,9 @@ screen = pygame.display.set_mode(size, flags=pygame.DOUBLEBUF, depth=32)
 tile_graphics = {
     0 : pygame.image.load('sky.png').convert_alpha(),
     1 : pygame.image.load('grass.png').convert_alpha(),
-    2 : pygame.image.load('stone.png').convert_alpha()
+    2 : pygame.image.load('stone.png').convert_alpha(),
+    3 : pygame.image.load('log.png').convert_alpha(),
+    4 : pygame.image.load('leaves.png').convert_alpha()
 }
 highlight = pygame.image.load('frame.png').convert_alpha()
 
@@ -40,6 +42,8 @@ highlightcolor = pygame.Color(255,255,0,32)
 speed = [0.0, 0.0]
 position = [42.0, 42.0]
 black = 0, 0, 0
+
+inventory = {1:5, 2:5, 3:5, 4:5}
 
 
 ball = pygame.image.load("nyan01.png").convert_alpha()
@@ -78,7 +82,7 @@ while 1:
             elif event.key == K_MINUS:
                 edit_type = max(0, edit_type-1)
             elif event.key == K_EQUALS:
-                edit_type = min(2, edit_type+1)
+                edit_type = min(4, edit_type+1)
 
         if event.type == pygame.KEYUP:
             if event.key == K_a:
@@ -91,7 +95,16 @@ while 1:
             if event.button == 1 and point_is_placeable(x, y, tilesize, 96, ballrect):
                 xtile = x//tilesize
                 ytile = y//tilesize
-                tiles[ytile][xtile] = edit_type
+                tile_type = tiles[ytile][xtile]
+                if edit_type == 0:
+                    if tile_type > 0:
+                        tiles[ytile][xtile] = edit_type
+                        inventory[tile_type] += 1
+                elif tile_type == 0:
+                    if inventory[edit_type] > 0:
+                        tiles[ytile][xtile] = edit_type
+                        inventory[edit_type] -= 1
+                
 
             
 
@@ -119,7 +132,19 @@ while 1:
     
     
     screen.blit(ball, ballrect)
-    debugtext = font.render("{},{}".format(dx,dy),True,(255,255,255))
+
+    # render inventory
+    inv_rect = pygame.Rect(tilesize/2, tilesize/2, (tilesize+2)*4 + 2, tilesize+4)
+    pygame.draw.rect(screen, (0,0,0), inv_rect)
+    for id, count in inventory.items():
+        item_rect = pygame.Rect(inv_rect.left+2 + (id-1)*(tilesize+2), inv_rect.top+2, tilesize, tilesize)
+        screen.blit(tile_graphics[id], item_rect)
+        count_text = font.render(str(count),True,(255,255,255))
+        screen.blit(count_text, item_rect.center)
+        if id == edit_type:
+            screen.blit(highlight, item_rect)
+
+    debugtext = font.render("1:{}, 2:{}, Sel:{}".format(inventory[1],inventory[2],edit_type),True,(255,255,255))
     screen.blit(debugtext,(0,0))
 
     clock.tick(144)
