@@ -23,20 +23,25 @@ else:
         ] for y in range(mapheight) 
     ]
     tilesize = 32
-    
-    
-
 
 size = width, height = mapwidth * tilesize, mapheight * tilesize
+screen = pygame.display.set_mode(size, flags=pygame.DOUBLEBUF)
+
+tile_graphics = {
+    0 : pygame.image.load('sky.png').convert_alpha(),
+    1 : pygame.image.load('grass.png').convert_alpha(),
+    2 : pygame.image.load('stone.png').convert_alpha()
+}
+
+
 wallcolor = pygame.Color(50,50,50)
 
 speed = [0.0, 0.0]
 position = [42.0, 42.0]
 black = 0, 0, 0
 
-screen = pygame.display.set_mode(size, flags=pygame.DOUBLEBUF)
 
-ball = pygame.image.load("nyan01.png")
+ball = pygame.image.load("nyan01.png").convert_alpha()
 
 font = pygame.font.SysFont("Comic Sans",20)
 
@@ -90,12 +95,10 @@ while 1:
     ballrect = ball.get_rect().move(position[0], position[1])
 
     # update display
-    screen.fill(black)
     for y in range(mapheight):
         for x in range(mapwidth):
-            if tiles[y][x] == 1:
-                rect = pygame.Rect(x*tilesize, y*tilesize, tilesize, tilesize)
-                pygame.draw.rect(screen, wallcolor, rect)
+            rect = pygame.Rect(x*tilesize, y*tilesize, tilesize, tilesize)
+            screen.blit(tile_graphics[tiles[y][x]], rect)
 
     screen.blit(ball, ballrect)
     debugtext = font.render("{},{}".format(dx,dy),True,(255,255,255))
