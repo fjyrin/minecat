@@ -25,16 +25,17 @@ else:
     tilesize = 32
 
 size = width, height = mapwidth * tilesize, mapheight * tilesize
-screen = pygame.display.set_mode(size, flags=pygame.DOUBLEBUF)
+screen = pygame.display.set_mode(size, flags=pygame.DOUBLEBUF, depth=32)
 
 tile_graphics = {
     0 : pygame.image.load('sky.png').convert_alpha(),
     1 : pygame.image.load('grass.png').convert_alpha(),
     2 : pygame.image.load('stone.png').convert_alpha()
 }
-
+highlight = pygame.image.load('frame.png').convert_alpha()
 
 wallcolor = pygame.Color(50,50,50)
+highlightcolor = pygame.Color(255,255,0,32)
 
 speed = [0.0, 0.0]
 position = [42.0, 42.0]
@@ -44,6 +45,16 @@ black = 0, 0, 0
 ball = pygame.image.load("nyan01.png").convert_alpha()
 
 font = pygame.font.SysFont("Comic Sans",20)
+
+def point_is_placeable(x, y, tilesize, max_dist, player_rect):
+    rect = tilerect_from_point(x, y, tilesize)
+    distance_squared = (player_rect.centerx - rect.centerx)**2 + (player_rect.centery - rect.centery)**2
+    return distance_squared < max_dist**2 and not player_rect.colliderect(rect)
+
+def tilerect_from_point(x, y, tilesize):
+    tile_x = x // tilesize
+    tile_y = y // tilesize
+    return pygame.Rect(tile_x*tilesize, tile_y*tilesize, tilesize, tilesize)
 
 while 1:
     for event in pygame.event.get():
@@ -76,9 +87,10 @@ while 1:
                 speed[0] -= 1
 
         if event.type == pygame.MOUSEBUTTONDOWN:
-            if event.button == 1:
-                xtile = event.pos[0]//tilesize
-                ytile = event.pos[1]//tilesize
+            x, y = event.pos
+            if event.button == 1 and point_is_placeable(x, y, tilesize, 96, ballrect):
+                xtile = x//tilesize
+                ytile = y//tilesize
                 tiles[ytile][xtile] = edit_type
 
             
@@ -100,6 +112,12 @@ while 1:
             rect = pygame.Rect(x*tilesize, y*tilesize, tilesize, tilesize)
             screen.blit(tile_graphics[tiles[y][x]], rect)
 
+    # check cursor position
+    mouse_x, mouse_y = pygame.mouse.get_pos()
+    if point_is_placeable(mouse_x, mouse_y, tilesize, 96, ballrect):
+        screen.blit(highlight, tilerect_from_point(mouse_x, mouse_y, tilesize))
+    
+    
     screen.blit(ball, ballrect)
     debugtext = font.render("{},{}".format(dx,dy),True,(255,255,255))
     screen.blit(debugtext,(0,0))
